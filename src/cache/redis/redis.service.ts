@@ -11,7 +11,6 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         port: 43567,
       },
     });
-    console.log(await this.redisServer.getPort(), await this.redisServer.getHost());
   }
 
   async onModuleDestroy() {
