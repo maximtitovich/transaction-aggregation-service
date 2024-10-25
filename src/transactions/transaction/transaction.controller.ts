@@ -1,9 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { TransactionsService } from './transaction.service';
+import { TransactionService } from './transaction.service';
 
 @Controller('transactions')
-export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+export class TransactionController {
+  constructor(private readonly transactionsService: TransactionService) {}
 
   @Get('aggregate')
   async getAggregatedData(@Query('userId') userId: string) {
