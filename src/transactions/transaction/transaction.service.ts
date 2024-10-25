@@ -4,6 +4,7 @@ import { Transaction } from './transaction.entity';
 import { Repository } from 'typeorm';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { TransactionMockService } from '../transaction.mock/transaction.mock.service';
 
 @Injectable()
 export class TransactionService {
@@ -14,9 +15,10 @@ export class TransactionService {
       private transactionRepository: Repository<Transaction>,
       @InjectQueue('cache') // Inject the Bull queue for caching
       private cacheQueue: Queue,
+      private readonly transactionMockService: TransactionMockService,
     ) {}
   
-    async aggregateData(userId: string) {
+    async aggregateData(userId: string, startDate: string, endDate: string) {
       const cacheKey = `user:${userId}:aggregate`;
   
       // Check if the data exists in the cache (direct Redis interaction via Bull)
@@ -25,10 +27,8 @@ export class TransactionService {
         return JSON.parse(cachedData); // Return cached data if it exists
       }
   
-      // Fetch transaction data from the database
-      const transactions = await this.transactionRepository.find({
-        where: { userId },
-      });
+      // Fetch transaction data from the mock data
+      const transactions = await this.transactionMockService.getTransactions(startDate, endDate);
   
       // Aggregate the transaction data
       const aggregatedData = this.calculateAggregatedValues(transactions);
