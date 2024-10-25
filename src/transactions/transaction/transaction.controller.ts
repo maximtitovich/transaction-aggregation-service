@@ -7,6 +7,6 @@ export class TransactionController {
 
   @Get('aggregate')
   async getAggregatedData(@Query('userId') userId: string) {
-    return await this.transactionsService.aggregateDataByUserId(userId);
+    return await this.transactionsService.aggregateData(userId);
   }
 }
