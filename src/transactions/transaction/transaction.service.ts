@@ -1,4 +1,3 @@
-// src/transactions/transactions.service.ts
 import { Injectable } from '@nestjs/common';
 import { TransactionMockService } from '../transaction.mock/transaction.mock.service';
 
