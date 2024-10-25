@@ -4,7 +4,8 @@ import { Transaction } from './transaction.entity';
 import { Repository } from 'typeorm';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { TransactionMockService } from '../transaction.mock/transaction.mock.service';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class TransactionService {
@@ -15,7 +16,7 @@ export class TransactionService {
       private transactionRepository: Repository<Transaction>,
       @InjectQueue('cache') // Inject the Bull queue for caching
       private cacheQueue: Queue,
-      private readonly transactionMockService: TransactionMockService,
+      private readonly httpService: HttpService,
     ) {}
   
     async aggregateData(userId: string, startDate: string, endDate: string) {
@@ -28,7 +29,7 @@ export class TransactionService {
       }
   
       // Fetch transaction data from the mock data
-      const transactions = await this.transactionMockService.getTransactions(startDate, endDate);
+      const transactions = await this.fetchTransactions(startDate, endDate);
   
       // Aggregate the transaction data
       const aggregatedData = this.calculateAggregatedValues(transactions);
@@ -41,6 +42,12 @@ export class TransactionService {
   
       return aggregatedData; // Return the aggregated data
     }
+
+    private async fetchTransactions(startDate: string, endDate: string) {
+        const url = `http://localhost:3000/transactions/data?startDate=${startDate}&endDate=${endDate}`;
+        const response = await firstValueFrom(this.httpService.get(url));
+        return response.data; // Assuming the response structure matches what you expect
+      }
   
     private calculateAggregatedValues(transactions: Transaction[]) {
       let balance = 0;

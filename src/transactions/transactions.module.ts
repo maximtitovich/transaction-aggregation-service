@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transaction } from './transaction/transaction.entity';
 import { CacheModule } from '../cache/cache.module';
 import { BullModule } from '@nestjs/bull';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { BullModule } from '@nestjs/bull';
     BullModule.registerQueue({
       name: 'cache',
     }),
-    CacheModule
+    CacheModule,
+    HttpModule
   ],
   providers: [TransactionMockService, TransactionService],
   controllers: [TransactionController],
